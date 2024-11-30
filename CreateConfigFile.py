@@ -10,6 +10,8 @@ def CreateConfig():
                                  "max_people_in_que": 2,
                                  "symulation_time": (21 - 7) * 60 * 60} 
     
+    config["PassangerParameters"] = {"max_time_to_wait_std": 1,
+                                     "max_time_to_wait_mean": 1}
     with (open("config.ini", "w")) as configFile:
         config.write(configFile)
   

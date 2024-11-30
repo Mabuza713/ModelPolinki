@@ -14,9 +14,34 @@ symulation_step = int(config.get("ModelParameters", "symulation_step"))
 symulation_time = int(config.get("ModelParameters", "symulation_time"))
 
 max_people_in_que = int(config.get("ModelParameters", "max_people_in_que"))
+max_time_to_wait_mean = int(config.get("PassangerParameters", "max_time_to_wait_mean"))
+max_time_to_wait_std = int(config.get("PassangerParameters", "max_time_to_wait_std"))
+
 n_samples = 10000
 
 
+
+class Passanger:
+    """
+    Passanger parameters:
+    max_time_to_wait_mean - Mean time after which passanger will just leave in our model we will try to minimalize amount of people that will just leave
+    max_time_to_wait_std - Standard deviation of that
+    
+    """
+    
+    def __init__(self, arrival_numeric):
+        self.max_time_to_wait = np.random.normal(max_time_to_wait_mean, max_time_to_wait_std)
+        self.arrival_numeric = arrival_numeric
+
+        self.arrival_hour = int(arrival_numeric)
+        self.arrival_minute = round((arrival_numeric- int(arrival_numeric)) / 60, 2)
+    
+    # Functions that will allow us to change between numberic and time notation
+    def ChangeMinutesIntoFloat(self, hour):
+        return round(60 * (hour - int(hour)), 2)
+        
+    def ChangeFloatIntoMinutes(self, hour):
+        return round((hour- int(hour)) / 60, 2) 
 class polinkaModel:
     """
     Model parameters:
@@ -59,11 +84,11 @@ class polinkaModel:
         # (mean, standard deviation, weight)
         hourly_parameters = [
             (7.50, 0.5, 1),
-            (9, 0.4, 1),
-            (11.50, 0.4, 1),
-            (13, 0.4, 1),
-            (14.50, 0.4, 1),
-            (16, 0.4, 1),
+            (9, 0.4, 2),
+            (11.50, 0.4, 2),
+            (13, 0.4, 7),
+            (14.50, 0.4, 8),
+            (16, 0.4, 4),
             (17.50, 0.4, 1),
             (19, 0.4, 1),
             (20.50, 0.4, 1),
@@ -76,15 +101,21 @@ class polinkaModel:
         
         return np.concatenate(passengers)
     
-    # vvvv check if good
-    def ProofOfConcept(self):
-        self.first_line = self.PassengerSimulation()
-        self.first_line = self.first_line.reshape(-1,1)
-        gmm = GaussianMixture(n_components=3, random_state=3)
-        gmm.fit(self.first_line)
-
-        plt.hist(self.first_line, bins=int(symulation_time/symulation_step), alpha=0.5, color='gray', label='concept')
+    def VisualizeQueue(self, array):
+        array = array.reshape(-1,1)
+        
+        plt.hist(array, bins=int(symulation_time/symulation_step), alpha=0.5, color='gray', label='concept')
         plt.show()
+    
+    
+    def InitializeQueues(self):
+        self.first_line = self.PassengerSimulation()
+        self.second_line = self.PassengerSimulation()
+                
+
+        self.VisualizeQueue(self.first_line)
+        self.VisualizeQueue(self.second_line)
+        print(self.first_line)
         
 temp = polinkaModel(0,0,0,0,0)
-temp.ProofOfConcept()
+temp.InitializeQueues()
