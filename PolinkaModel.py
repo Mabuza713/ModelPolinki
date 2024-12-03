@@ -17,7 +17,7 @@ max_people_in_que = int(config.get("ModelParameters", "max_people_in_que"))
 max_time_to_wait_mean = int(config.get("PassangerParameters", "max_time_to_wait_mean"))
 max_time_to_wait_std = int(config.get("PassangerParameters", "max_time_to_wait_std"))
 
-n_samples = 1000
+n_samples = 500
 
 
 
@@ -32,11 +32,14 @@ class Passanger:
     def __init__(self, arrival_numeric):
         self.max_time_to_wait = np.random.normal(max_time_to_wait_mean, max_time_to_wait_std)
         self.arrival_numeric = arrival_numeric
-
-        self.arrival_hour = int(arrival_numeric)
-        self.arrival_minute = round((arrival_numeric- int(arrival_numeric)) / 60, 2)
+        self.arrival_hour = int(arrival_numeric) + 0.01 *floor((arrival_numeric - int(arrival_numeric)) * 60)
         
-    
+    # Method that will check if Passanger gets angry and just leaves
+    # True - he leaves
+    # False - he is keep waiting
+    def CheckIfWaitTimeExceed(self, current_time):
+        return True if abs(self.arrival_numeric - current_time) > self.max_time_to_wait else False
+            
     # Functions that will allow us to change between numberic and time notation
     def ChangeMinutesIntoFloat(self, hour):
         return round(60 * (hour - int(hour)), 2)
@@ -89,12 +92,12 @@ class polinkaModel:
         # list containting tuples in where numbers mean:
         # (mean, standard deviation, weight)
         hourly_parameters = [
-            (7.50, 0.2, 0.1),
+            (7.20, 0.2, 0.05),
             (9, 0.4, 0.1),
             (11.50, 0.4, 0.1),
-            (13, 0.2, 0.1),
+            (13, 0.3, 0.2),
             (14.50, 0.2, 0.1),
-            (16, 0.2, 0.1),
+            (16, 0.2, 0.15),
             (17.50, 0.4, 0.1),
             (19, 0.4, 0.1),
             (20.50, 0.4, 0.1),
@@ -103,9 +106,10 @@ class polinkaModel:
         passengers = []
         for mean, std, weight in hourly_parameters:
             n = int(n_samples * weight)
-            passengers.append(np.random.normal(mean, std, n))
+            for _ in range(n):
+                passengers.append(Passanger(np.random.normal(mean, std)))
         
-        return np.concatenate(passengers)
+        return passengers
     
     def VisualizeQueue(self, array):
         array = array.reshape(-1,1)
@@ -119,25 +123,31 @@ class polinkaModel:
         # of seconds in working model devided by simulation step
         self.first_line = self.PassengerSimulation()
         self.second_line = self.PassengerSimulation()
-        self.first_line_histogrammed = np.histogram(self.first_line, bins = int(symulation_time/symulation_step))
-        self.second_line_histogrammed = np.histogram(self.second_line, bins = int(symulation_time/symulation_step))
+        self.first_line_histogrammed = np.histogram([x.arrival_numeric for x in self.first_line], bins = int(symulation_time/symulation_step))
+        self.second_line_histogrammed = np.histogram([x.arrival_numeric for x in self.second_line], bins = int(symulation_time/symulation_step))
 
+
+        # Good to control + might use it in visualisation
         with open("record.txt", "w") as record:
-            record.write("amount_of_ppl; time_of_day; second_of_day\n")
+            record.write("'amount_of_ppl'; 'time_of_day'; 'second_of_day'\n")
             for i in range(len(self.second_line_histogrammed[0])):
                 record.write(f"{self.second_line_histogrammed[0][i]}; {self.ChangeFloatIntoMinutes(self.second_line_histogrammed[1][i])}; {self.second_line_histogrammed[1][i]* 60 * 60}\n")
 
-        # Visualization of our queues histograms
-        self.VisualizeQueue(self.first_line)
-        #self.VisualizeQueue(self.second_line)
-        #print(self.first_line)
         
         
     def ChangeMinutesIntoFloat(self, hour):
         return int(hour) + round(0.01 * 60 / (hour - int(hour)) , 3)- 0.01 # <--- might be wrong will see
         
     def ChangeFloatIntoMinutes(self, hour):
-        return int(hour) + round(0.01 * (hour- int(hour)) * 60, 2)  - 0.01
+        return int(hour) + 0.01 *floor((hour - int(hour)) * 60)
+
+
+    def SimulationProcess(self):
+        self.InitializeQueues()
+        
+        
+
+
 
 temp = polinkaModel(0,0,0,0,0)
-temp.InitializeQueues()
+temp.SimulationProcess()
