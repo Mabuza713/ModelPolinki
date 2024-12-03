@@ -1,4 +1,4 @@
-from math import exp, factorial
+from math import exp, factorial, floor, ceil
 from queue import Queue
 import configparser
 import numpy as np
@@ -17,7 +17,7 @@ max_people_in_que = int(config.get("ModelParameters", "max_people_in_que"))
 max_time_to_wait_mean = int(config.get("PassangerParameters", "max_time_to_wait_mean"))
 max_time_to_wait_std = int(config.get("PassangerParameters", "max_time_to_wait_std"))
 
-n_samples = 10000
+n_samples = 1000
 
 
 
@@ -35,6 +35,7 @@ class Passanger:
 
         self.arrival_hour = int(arrival_numeric)
         self.arrival_minute = round((arrival_numeric- int(arrival_numeric)) / 60, 2)
+        
     
     # Functions that will allow us to change between numberic and time notation
     def ChangeMinutesIntoFloat(self, hour):
@@ -75,23 +76,28 @@ class polinkaModel:
         self.people_to_departure = people_to_departure
         
         # two fifo queues in which we will append/pop elements (object of class human? <- class needs to be created)
-        self.first_line = Queue(maxsize = max_people_in_que)
-        self.second_line = Queue(maxsize = max_people_in_que)
+        self.first_line = []
+        self.second_line = []
+        
+        # variables will be filled in function
+        self.first_line_histogrammed = None
+        self.second_line_histogrammed = None
+        
         
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
         # list containting tuples in where numbers mean:
         # (mean, standard deviation, weight)
         hourly_parameters = [
-            (7.50, 0.5, 1),
-            (9, 0.4, 2),
-            (11.50, 0.4, 2),
-            (13, 0.4, 7),
-            (14.50, 0.4, 8),
-            (16, 0.4, 4),
-            (17.50, 0.4, 1),
-            (19, 0.4, 1),
-            (20.50, 0.4, 1),
+            (7.50, 0.2, 0.1),
+            (9, 0.4, 0.1),
+            (11.50, 0.4, 0.1),
+            (13, 0.2, 0.1),
+            (14.50, 0.2, 0.1),
+            (16, 0.2, 0.1),
+            (17.50, 0.4, 0.1),
+            (19, 0.4, 0.1),
+            (20.50, 0.4, 0.1),
         ]
         
         passengers = []
@@ -109,13 +115,29 @@ class polinkaModel:
     
     
     def InitializeQueues(self):
+        # Creating two queues and creating hisogram with amount of bin equal to amount 
+        # of seconds in working model devided by simulation step
         self.first_line = self.PassengerSimulation()
         self.second_line = self.PassengerSimulation()
-                
+        self.first_line_histogrammed = np.histogram(self.first_line, bins = int(symulation_time/symulation_step))
+        self.second_line_histogrammed = np.histogram(self.second_line, bins = int(symulation_time/symulation_step))
 
+        with open("record.txt", "w") as record:
+            record.write("amount_of_ppl; time_of_day; second_of_day\n")
+            for i in range(len(self.second_line_histogrammed[0])):
+                record.write(f"{self.second_line_histogrammed[0][i]}; {self.ChangeFloatIntoMinutes(self.second_line_histogrammed[1][i])}; {self.second_line_histogrammed[1][i]* 60 * 60}\n")
+
+        # Visualization of our queues histograms
         self.VisualizeQueue(self.first_line)
-        self.VisualizeQueue(self.second_line)
-        print(self.first_line)
+        #self.VisualizeQueue(self.second_line)
+        #print(self.first_line)
         
+        
+    def ChangeMinutesIntoFloat(self, hour):
+        return int(hour) + round(0.01 * 60 / (hour - int(hour)) , 3)- 0.01 # <--- might be wrong will see
+        
+    def ChangeFloatIntoMinutes(self, hour):
+        return int(hour) + round(0.01 * (hour- int(hour)) * 60, 2)  - 0.01
+
 temp = polinkaModel(0,0,0,0,0)
 temp.InitializeQueues()
