@@ -1,10 +1,7 @@
 from math import exp, factorial, floor, ceil
-from queue import Queue
 import configparser
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
-from sklearn.mixture import GaussianMixture
 from Passanger import Passanger
 
 config = configparser.ConfigParser()
