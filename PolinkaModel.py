@@ -2,7 +2,12 @@ from math import exp, factorial, floor, ceil
 import configparser
 import numpy as np
 import matplotlib.pyplot as plt
+from enum import Enum
+
+
 from Passanger import Passanger
+from Gondola import Gondola
+
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -19,21 +24,14 @@ n_samples = 500
 
 
 
-class polinkaModel:
+class Symulacja:
     """
     Model parameters:
     symulation_step - Amount of min/sec we will move with each iteration
     max_people_in_que - Maximum amount of peaople in queue after witch people will just say its 
                         not worth to wait, pass 0 for infinity queue capacity
-    
-    Deterministic parameters:
-    
     cabins_amount - How many gondolas will be simulated in our model
-    cabing_capacity - How many people can fit into one gondola
-    cabins_speed - Mean speed of a cabin
-    max_stay_time - Timer after witch cabin will departure even with one person on board
-    people_to_departure - Amount of peaople needed for cabin to departure instanlt
-    
+
     
     Probabilistic parameters:
     to model such destribution function containing our initial conditions, we will need to 
@@ -43,14 +41,14 @@ class polinkaModel:
     # while testing using seed
     np.random.seed(10)
     
-    
-    def __init__(self, cabins_amount, cabins_capacity, cabins_speed, max_stay_time, people_to_departure):
-        self.cabins_amount = cabins_amount
-        self.cabins_capacity = cabins_capacity
-        self.cabins_speed = cabins_speed
-        self.max_stay_time = max_stay_time
-        self.people_to_departure = people_to_departure
+    # Possible symulation states
+    class status(Enum):
+        waiting = "waiting"
+        moving = "moving"
+        counting_time = "counting_time"
         
+        
+    def __init__(self,cabins_amount):
         # two fifo queues in which we will append/pop elements (object of class human? <- class needs to be created)
         self.first_line = []
         self.second_line = []
@@ -59,6 +57,10 @@ class polinkaModel:
         self.first_line_histogrammed = None
         self.second_line_histogrammed = None
         
+        # initial symulation status is waiting
+        self.current_status = self.status("waiting")
+        
+        self.cabins_amount = cabins_amount
         
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
@@ -80,7 +82,9 @@ class polinkaModel:
         for mean, std, weight in hourly_parameters:
             n = int(n_samples * weight)
             for _ in range(n):
-                passengers.append(Passanger(np.random.normal(mean, std)))
+                temp = np.random.normal(mean, std)
+                if (self.ChangeFloatIntoMinutes(temp) >= 7):
+                    passengers.append(Passanger(temp))
         
         return passengers
     
@@ -104,7 +108,7 @@ class polinkaModel:
         with open("record.txt", "w") as record:
             record.write("'amount_of_ppl'; 'time_of_day'; 'second_of_day'\n")
             for i in range(len(self.second_line_histogrammed[0])):
-                record.write(f"{self.second_line_histogrammed[0][i]}; {self.ChangeFloatIntoMinutes(self.second_line_histogrammed[1][i])}; {self.second_line_histogrammed[1][i]* 60 * 60}\n")
+                record.write(f"{self.second_line_histogrammed[0][i]}; {self.ChangeFloatIntoMinutes(self.second_line_histogrammed[1][i])}; {self.second_line_histogrammed[1][i]* 60 * 60 - 7 * 60 * 60}\n")
 
         
         
@@ -112,15 +116,29 @@ class polinkaModel:
         return int(hour) + round(0.01 * 60 / (hour - int(hour)) , 3)- 0.01 # <--- might be wrong will see
         
     def ChangeFloatIntoMinutes(self, hour):
-        return int(hour) + 0.01 *floor((hour - int(hour)) * 60)
+        return int(hour) + 0.01 * floor((hour - int(hour)) * 60)
 
 
     def SimulationProcess(self):
         self.InitializeQueues()
+        first_que = self.first_line
+        second_que = self.second_line
+        
+        time = 0
+        
+        # Creating gondolas list
+        list_of_gondolas = []
+        for _ in range(self.cabins_amount):
+            list_of_gondolas.append(Gondola(15, 2 , 5, 8))
+            
+        
+        
+
+
         
         
 
 
 
-temp = polinkaModel(0,0,0,0,0)
+temp = Symulacja(2)
 temp.SimulationProcess()
