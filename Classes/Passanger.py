@@ -3,7 +3,7 @@ import configparser
 import numpy as np
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+config.read("Config/config.ini")
 
 symulation_step = int(config.get("ModelParameters", "symulation_step"))
 symulation_time = int(config.get("ModelParameters", "symulation_time"))
