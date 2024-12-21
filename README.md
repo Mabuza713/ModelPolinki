@@ -14,7 +14,7 @@ please do not copy paste code from chatgpt thx thx
 Please add TO DO bullet points 
 - ~~extract Passanger class to other file~~
 - create linked list that will contain class of object cabin
-- start modeling?  
+- start modeling  
 - Changing numeric time to date time and viceversa
 - Repair visualization of queues
 - Add config for gondola
