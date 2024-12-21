@@ -26,17 +26,9 @@ class Passanger:
     def __init__(self, arrival_numeric):
         self.max_time_to_wait = np.random.normal(max_time_to_wait_mean, max_time_to_wait_std)
         self.arrival_numeric = arrival_numeric
-        self.arrival_hour = int(arrival_numeric) + 0.01 *floor((arrival_numeric - int(arrival_numeric)) * 60)
         
     # Method that will check if Passanger gets angry and just leaves
     # True - he leaves
     # False - he is keep waiting
     def CheckIfWaitTimeExceed(self, current_time):
         return True if abs(self.arrival_numeric - current_time) > self.max_time_to_wait else False
-            
-    # Functions that will allow us to change between numberic and time notation
-    def ChangeMinutesIntoFloat(self, hour):
-        return round(60 * (hour - int(hour)), 2)
-        
-    def ChangeFloatIntoMinutes(self, hour):
-        return round((hour- int(hour)) / 60, 2) 

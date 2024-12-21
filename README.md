@@ -13,4 +13,11 @@ please do not copy paste code from chatgpt thx thx
 
 Please add TO DO bullet points 
 - ~~extract Passanger class to other file~~
-- start modeling
+- start modeling?  
+- Changing numeric time to date time and viceversa
+- Repair visualization of queues
+- Add config for gondola
+- Create gondola objects 
+- Model passanger arrival to gondola
+- create stats: amount of peaople that left the que, avarage wait time,  and other we can think about it 
+- Visualization of system create some txt fiel with values for passanger when he gets to the que, to the gondola, and departure of gondola, and arrival time to second outpost

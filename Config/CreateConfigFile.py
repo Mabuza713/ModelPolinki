@@ -6,7 +6,7 @@ import configparser
 
 def CreateConfig():
     config = configparser.ConfigParser()
-    config["ModelParameters"] = {"symulation_step": 1, 
+    config["ModelParameters"] = {"symulation_step": 1, # <-- in secounds 
                                  "max_people_in_que": 2,
                                  "symulation_time": (21 - 7) * 60 * 60} 
     
