@@ -3,6 +3,7 @@ import configparser
 import numpy as np
 import matplotlib.pyplot as plt
 from enum import Enum
+from collections import deque
 
 
 from Passanger import Passanger
@@ -10,7 +11,7 @@ from Gondola import Gondola
 
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+config.read("Config/config.ini")
 
 symulation_step = int(config.get("ModelParameters", "symulation_step"))
 symulation_time = int(config.get("ModelParameters", "symulation_time"))
@@ -19,7 +20,7 @@ max_people_in_que = int(config.get("ModelParameters", "max_people_in_que"))
 max_time_to_wait_mean = int(config.get("PassangerParameters", "max_time_to_wait_mean"))
 max_time_to_wait_std = int(config.get("PassangerParameters", "max_time_to_wait_std"))
 
-n_samples = 500
+n_samples = 1000
 
 
 
@@ -32,6 +33,7 @@ class Symulacja:
                         not worth to wait, pass 0 for infinity queue capacity
     cabins_amount - How many gondolas will be simulated in our model
 
+    temp_first_que and temp_second_que are both lists to which we will append and pop passangers
     
     Probabilistic parameters:
     to model such destribution function containing our initial conditions, we will need to 
@@ -62,6 +64,13 @@ class Symulacja:
         
         self.cabins_amount = cabins_amount
         
+        # variables to then calculate statistics
+        self.already_transported_passangers = []
+        self.passangers_that_left_que = []
+    
+        self.temp_first_que = []     # <- temp ques that will help us track who is waiting to get into the gondola
+        self.temp_second_que = []
+        
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
         # list containting tuples in where numbers mean:
@@ -89,7 +98,7 @@ class Symulacja:
             
             temp_time_list.sort()
             for time in temp_time_list:
-                if (time >= 7):
+                if (time >= 25100):
                     passangers_vis.append(int(time))
                     passengers.append(Passanger(int(time)))
                     
@@ -109,8 +118,8 @@ class Symulacja:
         # of seconds in working model devided by simulation step
         self.first_line = self.PassengerSimulation()
         self.second_line = self.PassengerSimulation()
-        self.first_line_histogrammed = np.histogram([x.arrival_numeric for x in self.first_line], bins = int(symulation_time))
-        self.second_line_histogrammed = np.histogram([x.arrival_numeric for x in self.second_line], bins = int(symulation_time))
+        self.first_line_histogrammed = np.histogram([x.arrival_time for x in self.first_line], bins = int(symulation_time))
+        self.second_line_histogrammed = np.histogram([x.arrival_time for x in self.second_line], bins = int(symulation_time))
 
         # Good to control + might use it in visualisation
         with open("record.txt", "w") as record:
@@ -118,26 +127,63 @@ class Symulacja:
             for i in range(len(self.second_line_histogrammed[0])):
                 record.write(f"{self.second_line_histogrammed[0][i]}; {self.second_line_histogrammed[1][i]* 60 * 60 - 7 * 60 * 60}\n")
 
+    def TimeToNormal(self, liczba):
+        godzina = liczba // 3600
+        minuta = (liczba - godzina * 3600) // 60
+        sekunda = liczba - (godzina * 3600) - (minuta * 60)
+        return {"godzina":godzina, "minuta":minuta, "sekunda":sekunda}
+
+
+
+
+
+    def CheckWhoLeavesQueues(self, time): # <- this function takes temp queues
+        for index, passanger in enumerate(self.temp_first_que):
+            if passanger.arrival_time + passanger.max_time_to_wait < time:
+                self.temp_first_que.pop(index)
+        
+        for index, passanger in enumerate(self.temp_second_que):
+            if passanger.arrival_time + passanger.max_time_to_wait < time:
+                self.temp_second_que.pop(index)
+
+    def DeleteNoneValuesFromQueues(self):
+        self.first_line = [x for x in self.first_line if x is not None]
+        self.second_line = [x for x in self.second_line if x is not None]
+
     def SimulationProcess(self):
+
+        
+        
         self.InitializeQueues()
-        first_que = self.first_line
-        second_que = self.second_line
+
+        first_gondola_que = deque()
+        second_gondola_que = deque()
         
-        def TimeToNormal(liczba):
-            godzina = liczba // 3600
-            minuta = (liczba - godzina * 3600) // 60
-            sekunda = liczba - (godzina * 3600) - (minuta * 60)
-            print(f"godzina: {godzina} --- minuta: {minuta} ---- sekunda: {sekunda}")
-        
-        
-        
-        for time in range(7 * 60 * 60, 21 * 60 * 60, symulation_step):
+        for i in range(0, self.cabins_amount):
+             first_gondola_que.append(Gondola(15, 120, 30, 15, "gondola_" + str(i)))
             
-        
 
 
-        
-        
+        # simulating 
+        for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
+            self.DeleteNoneValuesFromQueues()
+                        
+            self.CheckWhoLeavesQueues(time)
+            
+            for index, passanger in enumerate(self.first_line):
+                if passanger.arrival_time <= time:
+                    self.temp_first_que.append(passanger)
+                    self.first_line[index] = None
+                else:
+                    break
+
+            for index, passanger in enumerate(self.second_line):
+                if passanger.arrival_time <= time:
+                    self.temp_second_que.append(passanger)
+                    self.second_line[index] = None
+                else:
+                    break
+            
 
 
 
