@@ -13,6 +13,8 @@ class Gondola:
     people_to_departure - Amount of peaople needed for cabin to departure instanlt
     name - Variable that will help debug our system
     
+    arrival time - Time in which gondola arrived to location
+    count time - Time of first passanger going on board
     """
     
     # while testing using seed
@@ -25,4 +27,6 @@ class Gondola:
         self.cabins_speed = cabins_speed
         self.max_stay_time = max_stay_time
         self.people_to_departure = people_to_departure
-        self.peaople_in_cabin = []
+        self.people_in_cabin = []
+        self.arrival_time = 7 * 60 * 50
+        self.count_time = None

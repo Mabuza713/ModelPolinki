@@ -68,8 +68,8 @@ class Symulacja:
         self.already_transported_passangers = []
         self.passangers_that_left_que = []
     
-        self.temp_first_que = []     # <- temp ques that will help us track who is waiting to get into the gondola
-        self.temp_second_que = []
+        self.temp_first_que = deque()     # <- temp ques that will help us track who is waiting to get into the gondola
+        self.temp_second_que = deque()
         
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
@@ -138,37 +138,31 @@ class Symulacja:
 
 
     def CheckWhoLeavesQueues(self, time): # <- this function takes temp queues
-        for index, passanger in enumerate(self.temp_first_que):
+        for index, passanger in enumerate(self.first_line):
             if passanger.arrival_time + passanger.max_time_to_wait < time:
-                self.temp_first_que.pop(index)
+                self.first_line[index] = None
         
-        for index, passanger in enumerate(self.temp_second_que):
+        for index, passanger in enumerate(self.second_line):
             if passanger.arrival_time + passanger.max_time_to_wait < time:
-                self.temp_second_que.pop(index)
+                self.second_line[index] = None
 
     def DeleteNoneValuesFromQueues(self):
         self.first_line = [x for x in self.first_line if x is not None]
         self.second_line = [x for x in self.second_line if x is not None]
 
     def SimulationProcess(self):
-
-        
-        
         self.InitializeQueues()
 
-        first_gondola_que = deque()
-        second_gondola_que = deque()
+        gondola_que = deque()
         
         for i in range(0, self.cabins_amount):
-             first_gondola_que.append(Gondola(15, 120, 30, 15, "gondola_" + str(i)))
+             gondola_que.append(Gondola(15, 120, 30, 15, "gondola_" + str(i)))
             
-
-
-        # simulating 
+        
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
             self.DeleteNoneValuesFromQueues()
-                        
             self.CheckWhoLeavesQueues(time)
+            self.DeleteNoneValuesFromQueues()
             
             for index, passanger in enumerate(self.first_line):
                 if passanger.arrival_time <= time:
@@ -176,7 +170,6 @@ class Symulacja:
                     self.first_line[index] = None
                 else:
                     break
-
             for index, passanger in enumerate(self.second_line):
                 if passanger.arrival_time <= time:
                     self.temp_second_que.append(passanger)
@@ -184,6 +177,28 @@ class Symulacja:
                 else:
                     break
             
+            if (self.current_status == self.status("waiting")):
+                first_gondola = gondola_que[0]; second_gondola = gondola_que[len(gondola_que) - 1]
+
+                while (len(first_gondola.people_in_cabin) <= first_gondola.cabins_capacity and len(self.temp_first_que) > 0):
+                    if (first_gondola.count_time != None):
+                        first_gondola.count_time = time
+                    first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
+                    
+                while (len(second_gondola.people_in_cabin) <= second_gondola.cabins_capacity and len(self.temp_second_que) > 0):
+                    if (second_gondola.count_time != None):
+                        second_gondola.count_time = time
+                    second_gondola.people_in_cabin.append(self.temp_second_que.popleft())
+                    
+                if (first_gondola.count_time != None):
+                    if (first_gondola.count_time + first_gondola.max_stay_time > time):
+                        self.current_status = self.status("moving")
+                
+                if (second_gondola.count_time != None):
+                    if (second_gondola.count_time + second_gondola.max_stay_time > time):
+                        self.current_status = self.status("moving")
+                
+
 
 
 
