@@ -1,24 +1,13 @@
 # Polinka model
-this repo contains simple model of cabin based transportation system located in Wroclaw
-please do not copy paste code from chatgpt thx thx
-
-## TO DO
-- make poisson type shit
+this repo contains simple model of cabin based transportation system located in Wroclaw 
 
 
 
-
-
-
-
-Please add TO DO bullet points 
+Please add TO DO <-?
 - ~~extract Passanger class to other file~~
-- start modeling
-- create linked list that will contain class of object cabin
-Changing numeric time to date time and viceversa
-- Repair visualization of queues
-- Add config for gondola
-- Create gondola objects 
-- Model passanger arrival to gondola
-- create stats: amount of peaople that left the que, avarage wait time,  and other we can think about it 
-- Visualization of system create some txt fiel with values for passanger when he gets to the que, to the gondola, and departure of gondola, and arrival time to second outpost
+- ~~Create gondola objects~~
+- ~~Model passanger arrival to gondola~~
+- Add finish time, wait time, and left the queue param to passanger obj
+- Create stats: amount of peaople that left the que, avarage wait time,  and other we can think about it
+- Create better formating of record.txt file
+
