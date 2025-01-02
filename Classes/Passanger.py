@@ -20,7 +20,7 @@ class Passanger:
     max_time_to_wait_std - Standard deviation of that
     
     """
-    
+    np.random.seed(10)
     def __init__(self, arrival_numeric):
         self.max_time_to_wait = int(np.random.normal(max_time_to_wait_mean, max_time_to_wait_std))
         self.arrival_time = arrival_numeric

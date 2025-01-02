@@ -134,21 +134,30 @@ class Symulacja:
 
 
     def CheckWhoLeavesQueues(self, time): # <- this function takes temp queues
-        for index, passanger in enumerate(self.first_line):
-            if passanger.arrival_time + passanger.max_time_to_wait < time:
+        for index, passanger in enumerate(self.temp_first_que):
+            if passanger.arrival_time + passanger.max_time_to_wait <= time:
                 self.passangers_that_left_que.append(passanger)
+                print(f"Passanger left first the queue arrival time: {passanger.arrival_time} and waited for {passanger.max_time_to_wait}")
                 passanger.left_queue = True
-                self.first_line[index] = None
-        
-        for index, passanger in enumerate(self.second_line):
-            if passanger.arrival_time + passanger.max_time_to_wait < time:
+                self.temp_first_que[index] = None
+                        
+        for index, passanger in enumerate(self.temp_second_que):
+            if passanger.arrival_time + passanger.max_time_to_wait <= time:
                 self.passangers_that_left_que.append(passanger)
+                print(f"Passanger left second the queue arrival time: {passanger.arrival_time} and waited for {passanger.max_time_to_wait}")
                 passanger.left_queue = True
-                self.second_line[index] = None
+                self.temp_second_que[index] = None
 
     def DeleteNoneValuesFromQueues(self):
-        self.first_line = [x for x in self.first_line if x is not None]
-        self.second_line = [x for x in self.second_line if x is not None]
+        temp_temp_first_que = [x for x in self.temp_first_que if x is not None]
+        self.temp_first_que = deque()
+        for passanger in temp_temp_first_que:
+            self.temp_first_que.append(passanger)
+        
+        temp_temp_second_que = [x for x in self.temp_second_que if x is not None]
+        self.temp_second_que = deque()
+        for passanger in temp_temp_second_que:
+            self.temp_second_que.append(passanger)
 
     def SimulationProcess(self):
         self.InitializeQueues()
@@ -156,7 +165,7 @@ class Symulacja:
         gondola_que = deque()
         
         for i in range(0, self.cabins_amount):
-             gondola_que.append(Gondola(30, 180, 30, 15, "gondola_" + str(i)))
+             gondola_que.append(Gondola(15, 180, 30, 10, "gondola_" + str(i)))
             
         
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
@@ -165,48 +174,49 @@ class Symulacja:
             self.DeleteNoneValuesFromQueues()
             
             for index, passanger in enumerate(self.first_line):
-                if passanger.arrival_time <= time:
-                    passanger.wait_time = time - passanger.arrival_time
-                    self.temp_first_que.append(passanger)
-                    self.first_line[index] = None
-                else:
-                    break
+                if self.first_line[index] != None:
+                    if passanger.arrival_time <= time :
+                        passanger.wait_time = time - passanger.arrival_time
+                        self.temp_first_que.append(passanger)
+                        self.first_line[index] = None
+                    else:
+                        break
             for index, passanger in enumerate(self.second_line):
-                if passanger.arrival_time <= time:
-                    passanger.wait_time = time - passanger.arrival_time
-                    self.temp_second_que.append(passanger)
-                    self.second_line[index] = None
-                else:
-                    break
+                if (self.second_line[index] != None):
+                    if passanger.arrival_time <= time:
+                        passanger.wait_time = time - passanger.arrival_time
+                        self.temp_second_que.append(passanger)
+                        self.second_line[index] = None
+                    else:
+                        break
             if (self.current_status == self.status("waiting")):
                 first_gondola = gondola_que[0]; second_gondola = gondola_que[len(gondola_que) - 1]
-
-                while (len(first_gondola.people_in_cabin) <= first_gondola.cabins_capacity and len(self.temp_first_que) > 0):
+                while (len(first_gondola.people_in_cabin) < first_gondola.cabins_capacity and len(self.temp_first_que) > 0):
                     if (first_gondola.count_time == None):
                         first_gondola.count_time = time
                     first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
                     
-                while (len(second_gondola.people_in_cabin) <= second_gondola.cabins_capacity and len(self.temp_second_que) > 0):
+                while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0):
                     if (second_gondola.count_time == None):
                         second_gondola.count_time = time
                     second_gondola.people_in_cabin.append(self.temp_second_que.popleft())
                     
-                if (first_gondola.count_time != None):
-                    if (first_gondola.count_time + first_gondola.max_stay_time <= time):
+                if (first_gondola.count_time != None or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
+                    if (first_gondola.count_time + first_gondola.max_stay_time <= time or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                         first_gondola.departure_time = time
                         print(f"""First gondola departure time: {first_gondola.departure_time}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
                 
-                if (second_gondola.count_time != None):
-                    if (second_gondola.count_time + second_gondola.max_stay_time <= time):
+                if (second_gondola.count_time != None or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
+                    if (second_gondola.count_time + second_gondola.max_stay_time <= time or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                         second_gondola.departure_time = time
                         print(f"""Second gondola departure time: {second_gondola.departure_time}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
                 
 
             if (self.current_status == self.status("moving")):
-                if (first_gondola.count_time != None):
-                    if (first_gondola.departure_time + second_gondola.travel_time < time):
+                if (first_gondola.departure_time != None):
+                    if (first_gondola.departure_time + second_gondola.travel_time <= time):
                         second_gondola.arrival_time = time
                         first_gondola.arrival_time = time
                         second_gondola.count_time = None
@@ -226,7 +236,7 @@ class Symulacja:
                         
                         self.current_status = self.status("waiting")
                         
-                elif (second_gondola.count_time != None):
+                elif (second_gondola.departure_time != None):
                     if (second_gondola.departure_time + second_gondola.travel_time < time):
                         second_gondola.count_time = None
                         first_gondola.count_time = None
@@ -246,8 +256,11 @@ class Symulacja:
                         second_gondola.people_in_cabin = []
                         self.current_status = self.status("waiting")
 
-
+            self.DeleteNoneValuesFromQueues()
+            self.CheckWhoLeavesQueues(time)
+            self.DeleteNoneValuesFromQueues()
 temp = Symulacja(2)
 temp.SimulationProcess()
 
 print(len(temp.passangers_that_left_que))
+print(len(temp.already_transported_passangers))

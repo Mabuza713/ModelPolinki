@@ -18,7 +18,7 @@ class Gondola:
     """
     
     # while testing using seed
-    np.random.seed(10)
+    #np.random.seed(10)
     
     
     def __init__(self,cabins_capacity, travel_time, max_stay_time, people_to_departure, name):
@@ -30,4 +30,4 @@ class Gondola:
         self.people_in_cabin = []
         self.arrival_time = 7 * 60 * 50
         self.count_time = None
-        self.departure_time = None;
+        self.departure_time = None
