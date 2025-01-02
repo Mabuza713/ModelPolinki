@@ -30,3 +30,4 @@ class Gondola:
         self.people_in_cabin = []
         self.arrival_time = 7 * 60 * 50
         self.count_time = None
+        self.departure_time = None;
