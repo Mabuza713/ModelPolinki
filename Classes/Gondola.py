@@ -21,10 +21,10 @@ class Gondola:
     np.random.seed(10)
     
     
-    def __init__(self,cabins_capacity, cabins_speed, max_stay_time, people_to_departure, name):
+    def __init__(self,cabins_capacity, travel_time, max_stay_time, people_to_departure, name):
         self.name = name
         self.cabins_capacity = cabins_capacity
-        self.cabins_speed = cabins_speed
+        self.travel_time = travel_time
         self.max_stay_time = max_stay_time
         self.people_to_departure = people_to_departure
         self.people_in_cabin = []

@@ -122,11 +122,7 @@ class Symulacja:
         self.second_line_histogrammed = np.histogram([x.arrival_time for x in self.second_line], bins = int(symulation_time))
 
         # Good to control + might use it in visualisation
-        with open("record.txt", "w") as record:
-            record.write("'amount_of_ppl'; 'time_of_day'; 'second_of_day'\n")
-            for i in range(len(self.second_line_histogrammed[0])):
-                record.write(f"{self.second_line_histogrammed[0][i]}; {self.second_line_histogrammed[1][i]* 60 * 60 - 7 * 60 * 60}\n")
-
+        
     def TimeToNormal(self, liczba):
         godzina = liczba // 3600
         minuta = (liczba - godzina * 3600) // 60
@@ -140,10 +136,14 @@ class Symulacja:
     def CheckWhoLeavesQueues(self, time): # <- this function takes temp queues
         for index, passanger in enumerate(self.first_line):
             if passanger.arrival_time + passanger.max_time_to_wait < time:
+                self.passangers_that_left_que.append(passanger)
+                passanger.left_queue = True
                 self.first_line[index] = None
         
         for index, passanger in enumerate(self.second_line):
             if passanger.arrival_time + passanger.max_time_to_wait < time:
+                self.passangers_that_left_que.append(passanger)
+                passanger.left_queue = True
                 self.second_line[index] = None
 
     def DeleteNoneValuesFromQueues(self):
@@ -156,7 +156,7 @@ class Symulacja:
         gondola_que = deque()
         
         for i in range(0, self.cabins_amount):
-             gondola_que.append(Gondola(15, 120, 30, 15, "gondola_" + str(i)))
+             gondola_que.append(Gondola(15, 180, 30, 15, "gondola_" + str(i)))
             
         
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
@@ -166,17 +166,18 @@ class Symulacja:
             
             for index, passanger in enumerate(self.first_line):
                 if passanger.arrival_time <= time:
+                    passanger.wait_time = time - passanger.arrival_time
                     self.temp_first_que.append(passanger)
                     self.first_line[index] = None
                 else:
                     break
             for index, passanger in enumerate(self.second_line):
                 if passanger.arrival_time <= time:
+                    passanger.wait_time = time - passanger.arrival_time
                     self.temp_second_que.append(passanger)
                     self.second_line[index] = None
                 else:
                     break
-            
             if (self.current_status == self.status("waiting")):
                 first_gondola = gondola_que[0]; second_gondola = gondola_que[len(gondola_que) - 1]
 
@@ -199,7 +200,16 @@ class Symulacja:
                         self.current_status = self.status("moving")
                 
 
-
+            if (self.current_status == self.status("moving")):
+                if (second_gondola.count_time != None):
+                    if (second_gondola.count_time + second_gondola.max_stay_time + second_gondola.travel_time < time):
+                        second_gondola.count_time = None
+                        first_gondola.count_time = None
+                        second_gondola.arrival_time = time
+                        first_gondola.arrival_time = time
+                        
+                        
+                    
 
 
 temp = Symulacja(2)

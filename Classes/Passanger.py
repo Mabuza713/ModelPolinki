@@ -24,6 +24,9 @@ class Passanger:
     def __init__(self, arrival_numeric):
         self.max_time_to_wait = int(np.random.normal(max_time_to_wait_mean, max_time_to_wait_std))
         self.arrival_time = arrival_numeric
+        self.wait_time = 0
+        self.finish_time = 0
+        self.left_queue = False
         
     # Method that will check if Passanger gets angry and just leaves
     # True - he leaves
