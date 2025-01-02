@@ -10,4 +10,4 @@ Please add TO DO <-?
 - Add finish time, wait time, and left the queue param to passanger obj
 - Create stats: amount of peaople that left the que, avarage wait time,  and other we can think about it
 - Create better formating of record.txt file
-
+- Make this God forsaken project easier to debug
