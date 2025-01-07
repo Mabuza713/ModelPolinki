@@ -18,16 +18,18 @@ class Passanger:
     Passanger parameters:
     max_time_to_wait_mean - Mean time after which passanger will just leave in our model we will try to minimalize amount of people that will just leave
     max_time_to_wait_std - Standard deviation of that
-    
     """
     np.random.seed(10)
     def __init__(self, arrival_numeric):
         self.max_time_to_wait = int(np.random.normal(max_time_to_wait_mean, max_time_to_wait_std))
+        if self.max_time_to_wait < 0:
+            self.max_time_to_wait = 0
+
         self.arrival_time = arrival_numeric
         self.wait_time = 0
         self.finish_time = 0
         self.left_queue = False
-        
+
     # Method that will check if Passanger gets angry and just leaves
     # True - he leaves
     # False - he is keep waiting
