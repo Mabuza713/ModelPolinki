@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from enum import Enum
 from collections import deque
+import csv
 
 
 from Passanger import Passanger
@@ -70,6 +71,17 @@ class Symulacja:
     
         self.temp_first_que = deque()     # <- temp ques that will help us track who is waiting to get into the gondola
         self.temp_second_que = deque()
+
+        # Lists for data. Each value refer to current time. Idk whether make sense
+
+        self.simulation_time_data = []
+        self.amount_people_has_come = []
+        self.people_in_queue_data = []
+        self.people_who_left_data = []
+        self.people_in_cabin_data = []
+        self.arrival_time_data = []
+        self.deperture_time_data = []
+        
         
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
@@ -101,20 +113,44 @@ class Symulacja:
                 if (time >= 25100):
                     passangers_vis.append(int(time))
                     passengers.append(Passanger(int(time)))
-                    
-        #self.VisualizeQueue(np.array(passangers_vis))
+        
+        self.amount_people_has_come = passangers_vis
+        # self.VisualizeQueue(np.array(passangers_vis))
         return passengers
     
+
     def VisualizeQueue(self, array):
-        array = array.reshape(-1,1)
-        
-        plt.hist(array, bins=100, alpha=0.5, color='gray', label='concept')
-        plt.xlim(left = 7 * 3600)
+        array = array.reshape(-1,1)/3600
+
+        plt.hist(array, bins=100, alpha=1, color='gray', label='concept')
+        plt.xlim(7, 22)
+        plt.xticks(ticks=np.arange(7, 22, 1), labels=(np.arange(7, 22, 1)))
         plt.show()
+
+
+    # Creating data file for simulation
+    def DataToFile(self):
+        names = ["Simulation time","Amount people has come","People in queue","People who left","People in cabin","Arrival time","Deperture time"]
+        
+        datas = [
+            [self.TimeToNormal(time) for time in self.simulation_time_data],
+            [self.amount_people_has_come.count(value) for value in self.simulation_time_data],
+        ]
+        
+        with open('data.csv', 'w') as file:
+            writer = csv.writer(file, delimiter="|")
+            writer.writerow(names)
+
+            for i in range(len(self.simulation_time_data)):
+                row = [(data[i] if i < len(data) else "") for data in datas]
+                writer.writerow(row)
+
+
+        
     
     
     def InitializeQueues(self):
-        # Creating two queues and creating hisogram with amount of bin equal to amount 
+        # Creating two queues and creating histogram with amount of bin equal to amount 
         # of seconds in working model devided by simulation step
         self.first_line = self.PassengerSimulation()
         self.second_line = self.PassengerSimulation()
@@ -123,28 +159,27 @@ class Symulacja:
 
         # Good to control + might use it in visualisation
         
-    def TimeToNormal(self, liczba):
-        godzina = liczba // 3600
-        minuta = (liczba - godzina * 3600) // 60
-        sekunda = liczba - (godzina * 3600) - (minuta * 60)
-        return {"godzina":godzina, "minuta":minuta, "sekunda":sekunda}
 
-
-
+    # Converting time in seconds to normal time
+    def TimeToNormal(self, number):
+        hours = number // 3600
+        minutes  = (number - hours * 3600) // 60
+        seconds = number - (hours * 3600) - (minutes * 60)
+        return hours,minutes,seconds
 
 
     def CheckWhoLeavesQueues(self, time): # <- this function takes temp queues
         for index, passanger in enumerate(self.temp_first_que):
             if passanger.arrival_time + passanger.max_time_to_wait <= time:
                 self.passangers_that_left_que.append(passanger)
-                print(f"Passanger left first the queue arrival time: {passanger.arrival_time} and waited for {passanger.max_time_to_wait}")
+                # print(f"Passanger left first the queue arrival time: {self.TimeToNormal(passanger.arrival_time)} and waited for: {self.TimeToNormal(passanger.max_time_to_wait)}")
                 passanger.left_queue = True
                 self.temp_first_que[index] = None
                         
         for index, passanger in enumerate(self.temp_second_que):
             if passanger.arrival_time + passanger.max_time_to_wait <= time:
                 self.passangers_that_left_que.append(passanger)
-                print(f"Passanger left second the queue arrival time: {passanger.arrival_time} and waited for {passanger.max_time_to_wait}")
+                # print(f"Passanger left second the queue arrival time: {self.TimeToNormal(passanger.arrival_time)} and waited for: {self.TimeToNormal(passanger.max_time_to_wait)}")
                 passanger.left_queue = True
                 self.temp_second_que[index] = None
 
@@ -169,6 +204,10 @@ class Symulacja:
             
         
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
+
+            # Taking current time
+            self.simulation_time_data.append(time)
+
             self.DeleteNoneValuesFromQueues()
             self.CheckWhoLeavesQueues(time)
             self.DeleteNoneValuesFromQueues()
@@ -190,11 +229,15 @@ class Symulacja:
                     else:
                         break
             if (self.current_status == self.status("waiting")):
-                first_gondola = gondola_que[0]; second_gondola = gondola_que[len(gondola_que) - 1]
+
+                first_gondola = gondola_que[0]
+                second_gondola = gondola_que[len(gondola_que) - 1]
+
                 while (len(first_gondola.people_in_cabin) < first_gondola.cabins_capacity and len(self.temp_first_que) > 0):
                     if (first_gondola.count_time == None):
                         first_gondola.count_time = time
                     first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
+
                     
                 while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0):
                     if (second_gondola.count_time == None):
@@ -204,13 +247,13 @@ class Symulacja:
                 if (first_gondola.count_time != None or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                     if (first_gondola.count_time + first_gondola.max_stay_time <= time or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                         first_gondola.departure_time = time
-                        print(f"""First gondola departure time: {first_gondola.departure_time}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
+                        # print(f"""First gondola departure time: {self.TimeToNormal(first_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
                 
                 if (second_gondola.count_time != None or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                     if (second_gondola.count_time + second_gondola.max_stay_time <= time or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                         second_gondola.departure_time = time
-                        print(f"""Second gondola departure time: {second_gondola.departure_time}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
+                        # print(f"""Second gondola departure time: {self.TimeToNormal(second_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
                 
 
@@ -260,7 +303,10 @@ class Symulacja:
             self.CheckWhoLeavesQueues(time)
             self.DeleteNoneValuesFromQueues()
 temp = Symulacja(2)
+
 temp.SimulationProcess()
 
-print(len(temp.passangers_that_left_que))
-print(len(temp.already_transported_passangers))
+temp.DataToFile()
+
+# print(len(temp.passangers_that_left_que))
+# print(len(temp.already_transported_passangers))
