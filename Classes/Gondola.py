@@ -28,6 +28,6 @@ class Gondola:
         self.max_stay_time = max_stay_time
         self.people_to_departure = people_to_departure
         self.people_in_cabin = []
-        self.arrival_time = 7 * 60 * 50
+        self.arrival_time = 7 * 60 * 60
         self.count_time = None
         self.departure_time = None
