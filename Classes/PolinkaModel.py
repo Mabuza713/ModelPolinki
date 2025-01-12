@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from enum import Enum
 from collections import deque
 import csv
+import csv
 
 
 from Passanger import Passanger
@@ -122,7 +123,14 @@ class Symulacja:
         return passengers
     
 
+    
+
     def VisualizeQueue(self, array):
+        array = array.reshape(-1,1)/3600
+
+        plt.hist(array, bins=100, alpha=1, color='gray', label='concept')
+        plt.xlim(7, 22)
+        plt.xticks(ticks=np.arange(7, 22, 1), labels=(np.arange(7, 22, 1)))
         array = array.reshape(-1,1)/3600
 
         plt.hist(array, bins=100, alpha=1, color='gray', label='concept')
@@ -158,6 +166,7 @@ class Symulacja:
     
     def InitializeQueues(self):
         # Creating two queues and creating histogram with amount of bin equal to amount 
+        # Creating two queues and creating histogram with amount of bin equal to amount 
         # of seconds in working model devided by simulation step
         self.first_line = self.PassengerSimulation()
         self.second_line = self.PassengerSimulation()
@@ -166,6 +175,13 @@ class Symulacja:
 
         # Good to control + might use it in visualisation
         
+
+    # Converting time in seconds to normal time
+    def TimeToNormal(self, number):
+        hours = number // 3600
+        minutes  = (number - hours * 3600) // 60
+        seconds = number - (hours * 3600) - (minutes * 60)
+        return hours,minutes,seconds
 
     # Converting time in seconds to normal time
     def TimeToNormal(self, number):
@@ -227,6 +243,10 @@ class Symulacja:
             # Taking current time
             self.simulation_time_data.append(time)
 
+
+            # Taking current time
+            self.simulation_time_data.append(time)
+
             self.DeleteNoneValuesFromQueues()
             # self.CountPeopleInQueues()
             self.CheckWhoLeavesQueues(time)
@@ -253,10 +273,15 @@ class Symulacja:
                 first_gondola = gondola_que[0]
                 second_gondola = gondola_que[len(gondola_que) - 1]
 
+
+                first_gondola = gondola_que[0]
+                second_gondola = gondola_que[len(gondola_que) - 1]
+
                 while (len(first_gondola.people_in_cabin) < first_gondola.cabins_capacity and len(self.temp_first_que) > 0):
                     if (first_gondola.count_time == None):
                         first_gondola.count_time = time
                     first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
+
 
                     
                 while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0):
@@ -268,12 +293,14 @@ class Symulacja:
                     if (first_gondola.count_time + first_gondola.max_stay_time <= time or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                         first_gondola.departure_time = time
                         # print(f"""First gondola departure time: {self.TimeToNormal(first_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
+                        # print(f"""First gondola departure time: {self.TimeToNormal(first_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
          
                 
                 if (second_gondola.count_time != None or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                     if (second_gondola.count_time + second_gondola.max_stay_time <= time or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                         second_gondola.departure_time = time
+                        # print(f"""Second gondola departure time: {self.TimeToNormal(second_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         # print(f"""Second gondola departure time: {self.TimeToNormal(second_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
 
@@ -332,6 +359,7 @@ class Symulacja:
             self.DeleteNoneValuesFromQueues()
 
 temp = Symulacja(2)
+
 
 temp.SimulationProcess()
 
