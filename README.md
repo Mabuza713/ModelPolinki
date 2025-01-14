@@ -11,4 +11,4 @@ Please add TO DO <-?
 - Create stats: amount of peaople that left the que, avarage wait time,  and other we can think about it
 - Create better formating of record.txt file
 - Make this God forsaken project easier to debug <- in progress
-- Make it functioning for more then 2 gondolas
+- ~~Make it functioning for more then 2 gondolas~~
