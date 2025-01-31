@@ -72,20 +72,21 @@ class Symulacja:
         self.temp_first_que = deque()     # <- temp ques that will help us track who is waiting to get into the gondola
         self.temp_second_que = deque()
 
+
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
         # list containting tuples in where numbers mean:
         # (mean, standard deviation, weight)
         hourly_parameters = [
             (7.20 * 3600, 0.2 * 3600, 0.05),
-            (9 * 3600, 0.4* 3600, 0.1),
-            (11.50 * 3600, 0.4* 3600, 0.1),
-            (13* 3600, 0.3* 3600, 0.2),
-            (14.50* 3600, 0.2* 3600, 0.1),
-            (16* 3600, 0.2* 3600, 0.15),
-            (17.50* 3600, 0.4* 3600, 0.1),
-            (19* 3600, 0.4* 3600, 0.1),
-            (20.50* 3600, 0.4* 3600, 0.1),
+            (9 * 3600, 0.4 * 3600, 0.1),
+            (11.50 * 3600, 0.4 * 3600, 0.1),
+            (13 * 3600, 0.3 * 3600, 0.2),
+            (14.50 * 3600, 0.2 * 3600, 0.1),
+            (16 * 3600, 0.2 * 3600, 0.15),
+            (17.50 * 3600, 0.4 * 3600, 0.1),
+            (19 * 3600, 0.4 * 3600, 0.1),
+            (20.50 * 3600, 0.4 * 3600, 0.1),
         ]
 
         passengers = []
@@ -103,14 +104,19 @@ class Symulacja:
                     passangers_vis.append(int(time))
                     passengers.append(Passanger(int(time)))
 
-        #self.VisualizeQueue(np.array(passangers_vis))
+        self.VisualizeQueue(np.array(passangers_vis))
         return passengers
 
-    def VisualizeQueue(self, array):
-        array = array.reshape(-1,1)
 
-        plt.hist(array, bins=100, alpha=0.5, color='gray', label='concept')
-        plt.xlim(left = 7 * 3600)
+    def VisualizeQueue(self, array):
+        array = array.reshape(-1, 1)
+
+        plt.hist(array, bins=100, alpha=0.5, color='lightblue', label='Passenger Distribution')
+        plt.xlim(left=7 * 3600)
+        plt.xlabel('Time (seconds)')
+        plt.ylabel('Number of Passengers')
+        plt.legend()
+        plt.title('Passenger Arrival Distribution')
         plt.show()
 
 
@@ -125,31 +131,44 @@ class Symulacja:
         # Good to control + might use it in visualisation
 
 
-    def CheckWhoLeavesQueues(self, time): # <- this function takes temp queues
-        for index, passanger in enumerate(self.temp_first_que):
+    def CheckWhoLeavesQueue(self, queue, queue_name, time):
+        for index, passanger in enumerate(queue):
             if passanger.arrival_time + passanger.max_time_to_wait <= time:
                 self.passangers_that_left_que.append(passanger)
-                print(f"Passanger left first the queue arrival time: {Utils.seconds_to_hms(passanger.arrival_time)} and waited for {passanger.max_time_to_wait}")
+                print(f"Passanger left {queue_name} the queue arrival time: {Utils.seconds_to_hms(passanger.arrival_time)} and waited for {passanger.max_time_to_wait}")
                 passanger.left_queue = True
-                self.temp_first_que[index] = None
+                queue[index] = None
 
-        for index, passanger in enumerate(self.temp_second_que):
-            if passanger.arrival_time + passanger.max_time_to_wait <= time:
-                self.passangers_that_left_que.append(passanger)
-                print(f"Passanger left second the queue arrival time: {Utils.seconds_to_hms(passanger.arrival_time)} and waited for {passanger.max_time_to_wait}")
-                passanger.left_queue = True
-                self.temp_second_que[index] = None
 
-    def DeleteNoneValuesFromQueues(self):
-        temp_temp_first_que = [x for x in self.temp_first_que if x is not None]
-        self.temp_first_que = deque()
-        for passanger in temp_temp_first_que:
-            self.temp_first_que.append(passanger)
+    def CleanQueue(self, queue):
+        """
+        Args:
+            queue: A deque object to be cleaned of None values.
+        """
+        return deque([x for x in queue if x is not None])
 
-        temp_temp_second_que = [x for x in self.temp_second_que if x is not None]
-        self.temp_second_que = deque()
-        for passanger in temp_temp_second_que:
-            self.temp_second_que.append(passanger)
+
+    def ProcessQueue(self, queue, queue_name, time):
+        """
+        Args:
+            queue: A deque object representing the queue to process.
+            queue_name: A string indicating the name of the queue (e.g., "first" or "second").
+            time: The current simulation time.
+        """
+        # Check and log passengers who leave the queue
+        self.CheckWhoLeavesQueue(queue, queue_name, time)
+        # Remove None values from the queue
+        return self.CleanQueue(queue)
+
+
+    def SimulateStep(self, time):
+        """
+        Args:
+            time: Aktualny czas symulacji.
+        """
+        self.temp_first_que = self.ProcessQueue(self.temp_first_que, "first", time)
+        self.temp_second_que = self.ProcessQueue(self.temp_second_que, "second", time)
+
 
     def SimulationProcess(self):
         self.InitializeQueues()
@@ -161,9 +180,7 @@ class Symulacja:
 
 
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
-            self.DeleteNoneValuesFromQueues()
-            self.CheckWhoLeavesQueues(time)
-            self.DeleteNoneValuesFromQueues()
+            self.SimulateStep(time)
 
             for index, passanger in enumerate(self.first_line):
                 if self.first_line[index] != None:
@@ -248,9 +265,7 @@ class Symulacja:
                         second_gondola.people_in_cabin = []
                         self.current_status = self.status("waiting")
 
-            self.DeleteNoneValuesFromQueues()
-            self.CheckWhoLeavesQueues(time)
-            self.DeleteNoneValuesFromQueues()
+            self.SimulateStep(time)
 temp = Symulacja(2)
 temp.SimulationProcess()
 
