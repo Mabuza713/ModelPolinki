@@ -31,36 +31,36 @@ class Symulacja():
     """
     Model parameters:
     symulation_step - Amount of min/sec we will move with each iteration
-    max_people_in_que - Maximum amount of peaople in queue after witch people will just say its 
+    max_people_in_que - Maximum amount of peaople in queue after witch people will just say its
                         not worth to wait, pass 0 for infinity queue capacity
     cabins_amount - How many gondolas will be simulated in our model
 
     temp_first_que and temp_second_que are both lists to which we will append and pop passangers
-    
+
     Probabilistic parameters:
-    to model such destribution function containing our initial conditions, we will need to 
-    
+    to model such destribution function containing our initial conditions, we will need to
+
     """
-    
+
     # while testing using seed
     np.random.seed(10)
-    
+
     # Possible symulation states
     class status(Enum):
         waiting = "waiting"
         moving = "moving"
         counting_time = "counting_time"
-        
-        
+
+
     def __init__(self,cabins_capacity, travel_time, max_stay_time):
         # two fifo queues in which we will append/pop elements (object of class human? <- class needs to be created)
         self.first_line = []
         self.second_line = []
-        
+
         # variables will be filled in function
         self.first_line_histogrammed = None
         self.second_line_histogrammed = None
-        
+
         # Gondola parameters
         self.cabins_capacity = cabins_capacity
         self.travel_time = travel_time
@@ -73,7 +73,7 @@ class Symulacja():
         # variables to then calculate statistics
         self.already_transported_passangers = []
         self.passangers_that_left_que = []
-    
+
         self.temp_first_que = deque()     # <- temp ques that will help us track who is waiting to get into the gondola
         self.temp_second_que = deque()
 
@@ -88,7 +88,7 @@ class Symulacja():
         self.temp_variable = 0
 
 
-        
+
     def PassengerSimulation(self):
         # The day has come, we are modeling Gaussian mixture model
         # list containting tuples in where numbers mean:
@@ -104,7 +104,7 @@ class Symulacja():
             (19* 3600   , 0.4* 3600, 0.05),
             (20.50* 3600, 0.4* 3600, 0.05),
         ]
-        
+
         passengers = []
         passangers_vis = []
         for mean, std, weight in hourly_parameters:
@@ -113,19 +113,19 @@ class Symulacja():
             for _ in range(n):
                 temp = np.random.normal(mean, std)
                 temp_time_list.append(temp)
-            
+
             temp_time_list.sort()
             for time in temp_time_list:
                 if (time >= 25100):
                     passangers_vis.append(int(time))
                     passengers.append(Passanger(int(time)))
-        
+
         self.amount_people_who_come += passangers_vis
         # self.VisualizeQueue(np.array(passangers_vis))
         return passengers
-    
 
-    
+
+
 
     def VisualizeQueue(self, array):
         array = array.reshape(-1,1)/3600
@@ -144,7 +144,7 @@ class Symulacja():
     # Creating data file for simulation
     def DataToFile(self,scenario):
         names = ["Symulation time","Real time","People who come","People in queue(first/second)","People who left","Transported People"]
-        
+
         datas = [
             self.simulation_time_data,
             [self.TimeToNormal(time) for time in self.simulation_time_data],
@@ -153,7 +153,7 @@ class Symulacja():
             self.people_who_left_data,
             self.people_transported_data,
         ]
-        
+
         with open(f'data{scenario}.csv', 'w') as file:
             writer = csv.writer(file, delimiter="|")
             writer.writerow(names)
@@ -163,8 +163,8 @@ class Symulacja():
                 writer.writerow(row)
 
     def InitializeQueues(self):
-        # Creating two queues and creating histogram with amount of bin equal to amount 
-        # Creating two queues and creating histogram with amount of bin equal to amount 
+        # Creating two queues and creating histogram with amount of bin equal to amount
+        # Creating two queues and creating histogram with amount of bin equal to amount
         # of seconds in working model devided by simulation step
         self.first_line = self.PassengerSimulation()
         self.second_line = self.PassengerSimulation()
@@ -188,7 +188,7 @@ class Symulacja():
                 passanger.left_queue = True
                 self.temp_first_que[index] = None
 
-                        
+
         for index, passanger in enumerate(self.temp_second_que):
             if passanger.arrival_time + passanger.max_time_to_wait <= time:
                 self.passangers_that_left_que.append(passanger)
@@ -203,7 +203,7 @@ class Symulacja():
         for passanger in temp_temp_first_que:
             self.temp_first_que.append(passanger)
 
-        
+
         temp_temp_second_que = [x for x in self.temp_second_que if x is not None]
         self.temp_second_que = deque()
         for passanger in temp_temp_second_que:
@@ -220,18 +220,18 @@ class Symulacja():
         self.InitializeQueues()
 
         gondola_que = deque()
-        
+
         for i in range(0, 2):
              gondola_que.append(Gondola(self.cabins_capacity, self.travel_time, self.max_stay_time))
-            
-        
+
+
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
 
 
             self.DeleteNoneValuesFromQueues()
             self.CheckWhoLeavesQueues(time)
             self.DeleteNoneValuesFromQueues()
-            
+
             for index, passanger in enumerate(self.first_line):
                 if self.first_line[index] != None:
                     if passanger.arrival_time <= time :
@@ -256,7 +256,7 @@ class Symulacja():
 
             if (self.current_status == self.status("waiting") and time >= 7*3600):
 
-                
+
                 first_gondola = gondola_que[0]
                 second_gondola = gondola_que[len(gondola_que)-1]
 
@@ -267,13 +267,13 @@ class Symulacja():
                     first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
 
 
-                    
+
                 while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0 ):
                     if (second_gondola.count_time == None):
                         second_gondola.count_time = time
                     second_gondola.people_in_cabin.append(self.temp_second_que.popleft())
 
-                    
+
                 if (first_gondola.count_time != None or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                     if (first_gondola.count_time + first_gondola.max_stay_time <= time or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                         first_gondola.departure_time = time
@@ -288,7 +288,7 @@ class Symulacja():
                         # print(f"""Second gondola departure time: {self.TimeToNormal(second_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
 
-                
+
 
             if (self.current_status == self.status("moving")):
                 if (first_gondola.departure_time != None):
@@ -297,19 +297,19 @@ class Symulacja():
                         first_gondola.arrival_time = time
                         second_gondola.count_time = None
                         first_gondola.count_time = None
-                        
+
                         for passanger in first_gondola.people_in_cabin:
                             passanger.finish_time = time
                             self.already_transported_passangers.append(passanger)
-                            
+
                         first_gondola.people_in_cabin = []
-                        
+
                         for passanger in second_gondola.people_in_cabin:
                             passanger.finish_time = time
                             self.already_transported_passangers.append(passanger)
-                        
+
                         second_gondola.people_in_cabin = []
-                        
+
                         self.current_status = self.status("waiting")
 
                 elif (second_gondola.departure_time != None):
@@ -318,19 +318,19 @@ class Symulacja():
                         first_gondola.count_time = None
                         second_gondola.arrival_time = time
                         first_gondola.arrival_time = time
-                        
+
                         for passanger in first_gondola.people_in_cabin:
                             passanger.finish_time = time
                             self.already_transported_passangers.append(passanger)
-                            
+
                         first_gondola.people_in_cabin = []
-                        
+
                         for passanger in second_gondola.people_in_cabin:
                             passanger.finish_time = time
                             self.already_transported_passangers.append(passanger)
-                    
+
                         second_gondola.people_in_cabin = []
-                        
+
                         self.current_status = self.status("waiting")
 
             self.DeleteNoneValuesFromQueues()
