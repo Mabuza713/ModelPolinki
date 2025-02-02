@@ -1,0 +1,250 @@
+--- Trial 1 (Stay Time Experiment) ---
+Max stay time = 10 s:
+  Total passengers: 9928
+  Transported: 5405
+  Left queue: 4458
+  Avg wait time: 62.61 s
+  Avg occupancy: 4.47
+  Avg queue length: 11.01
+------
+Max stay time = 15 s:
+  Total passengers: 9942
+  Transported: 5452
+  Left queue: 4429
+  Avg wait time: 54.39 s
+  Avg occupancy: 5.05
+  Avg queue length: 11.41
+------
+Max stay time = 20 s:
+  Total passengers: 9944
+  Transported: 5634
+  Left queue: 4247
+  Avg wait time: 63.63 s
+  Avg occupancy: 4.88
+  Avg queue length: 10.94
+------
+Max stay time = 25 s:
+  Total passengers: 9937
+  Transported: 5613
+  Left queue: 4268
+  Avg wait time: 59.34 s
+  Avg occupancy: 5.22
+  Avg queue length: 10.89
+------
+Max stay time = 30 s:
+  Total passengers: 9943
+  Transported: 5518
+  Left queue: 4364
+  Avg wait time: 57.10 s
+  Avg occupancy: 5.60
+  Avg queue length: 11.20
+------
+Max stay time = 35 s:
+  Total passengers: 9934
+  Transported: 5435
+  Left queue: 4431
+  Avg wait time: 55.24 s
+  Avg occupancy: 5.59
+  Avg queue length: 10.79
+------
+Max stay time = 40 s:
+  Total passengers: 9934
+  Transported: 5850
+  Left queue: 4021
+  Avg wait time: 58.47 s
+  Avg occupancy: 5.09
+  Avg queue length: 9.16
+------
+Max stay time = 45 s:
+  Total passengers: 9925
+  Transported: 5684
+  Left queue: 4176
+  Avg wait time: 60.11 s
+  Avg occupancy: 6.20
+  Avg queue length: 10.82
+------
+Max stay time = 50 s:
+  Total passengers: 9948
+  Transported: 5771
+  Left queue: 4110
+  Avg wait time: 54.47 s
+  Avg occupancy: 5.66
+  Avg queue length: 9.80
+------
+Max stay time = 60 s:
+  Total passengers: 9933
+  Transported: 5620
+  Left queue: 4270
+  Avg wait time: 53.94 s
+  Avg occupancy: 6.23
+  Avg queue length: 10.05
+------
+Wykres zapisany jako simulation_results_staytime_trial_1.png
+
+
+--- Trial 2 (Stay Time Experiment) ---
+Max stay time = 10 s:
+  Total passengers: 9919
+  Transported: 5372
+  Left queue: 4477
+  Avg wait time: 69.73 s
+  Avg occupancy: 4.40
+  Avg queue length: 11.18
+------
+Max stay time = 15 s:
+  Total passengers: 9928
+  Transported: 5473
+  Left queue: 4376
+  Avg wait time: 55.68 s
+  Avg occupancy: 4.77
+  Avg queue length: 11.41
+------
+Max stay time = 20 s:
+  Total passengers: 9932
+  Transported: 5478
+  Left queue: 4385
+  Avg wait time: 62.67 s
+  Avg occupancy: 4.74
+  Avg queue length: 10.63
+------
+Max stay time = 25 s:
+  Total passengers: 9952
+  Transported: 5460
+  Left queue: 4422
+  Avg wait time: 55.89 s
+  Avg occupancy: 5.42
+  Avg queue length: 10.77
+------
+Max stay time = 30 s:
+  Total passengers: 9919
+  Transported: 5396
+  Left queue: 4471
+  Avg wait time: 57.52 s
+  Avg occupancy: 5.75
+  Avg queue length: 11.17
+------
+Max stay time = 35 s:
+  Total passengers: 9934
+  Transported: 5560
+  Left queue: 4308
+  Avg wait time: 60.06 s
+  Avg occupancy: 4.69
+  Avg queue length: 9.37
+------
+Max stay time = 40 s:
+  Total passengers: 9946
+  Transported: 5381
+  Left queue: 4506
+  Avg wait time: 59.38 s
+  Avg occupancy: 5.97
+  Avg queue length: 10.98
+------
+Max stay time = 45 s:
+  Total passengers: 9929
+  Transported: 5779
+  Left queue: 4084
+  Avg wait time: 50.93 s
+  Avg occupancy: 5.47
+  Avg queue length: 9.95
+------
+Max stay time = 50 s:
+  Total passengers: 9944
+  Transported: 5708
+  Left queue: 4160
+  Avg wait time: 59.12 s
+  Avg occupancy: 6.10
+  Avg queue length: 10.74
+------
+Max stay time = 60 s:
+  Total passengers: 9949
+  Transported: 5599
+  Left queue: 4287
+  Avg wait time: 59.81 s
+  Avg occupancy: 6.46
+  Avg queue length: 10.74
+------
+Wykres zapisany jako simulation_results_staytime_trial_2.png
+
+
+--- Trial 3 (Stay Time Experiment) ---
+Max stay time = 10 s:
+  Total passengers: 9947
+  Transported: 5460
+  Left queue: 4440
+  Avg wait time: 64.24 s
+  Avg occupancy: 4.51
+  Avg queue length: 11.75
+------
+Max stay time = 15 s:
+  Total passengers: 9924
+  Transported: 5338
+  Left queue: 4512
+  Avg wait time: 56.83 s
+  Avg occupancy: 5.10
+  Avg queue length: 11.38
+------
+Max stay time = 20 s:
+  Total passengers: 9935
+  Transported: 5416
+  Left queue: 4468
+  Avg wait time: 69.97 s
+  Avg occupancy: 4.59
+  Avg queue length: 11.25
+------
+Max stay time = 25 s:
+  Total passengers: 9931
+  Transported: 5446
+  Left queue: 4441
+  Avg wait time: 60.95 s
+  Avg occupancy: 5.35
+  Avg queue length: 11.27
+------
+Max stay time = 30 s:
+  Total passengers: 9937
+  Transported: 5510
+  Left queue: 4363
+  Avg wait time: 55.91 s
+  Avg occupancy: 5.43
+  Avg queue length: 10.47
+------
+Max stay time = 35 s:
+  Total passengers: 9938
+  Transported: 5576
+  Left queue: 4319
+  Avg wait time: 55.77 s
+  Avg occupancy: 5.51
+  Avg queue length: 10.66
+------
+Max stay time = 40 s:
+  Total passengers: 9934
+  Transported: 5476
+  Left queue: 4398
+  Avg wait time: 63.08 s
+  Avg occupancy: 5.55
+  Avg queue length: 10.54
+------
+Max stay time = 45 s:
+  Total passengers: 9939
+  Transported: 5725
+  Left queue: 4153
+  Avg wait time: 53.48 s
+  Avg occupancy: 6.07
+  Avg queue length: 10.75
+------
+Max stay time = 50 s:
+  Total passengers: 9933
+  Transported: 5552
+  Left queue: 4302
+  Avg wait time: 51.16 s
+  Avg occupancy: 5.97
+  Avg queue length: 10.65
+------
+Max stay time = 60 s:
+  Total passengers: 9934
+  Transported: 5613
+  Left queue: 4270
+  Avg wait time: 52.51 s
+  Avg occupancy: 6.12
+  Avg queue length: 10.27
+------
+Wykres zapisany jako simulation_results_staytime_trial_3.png

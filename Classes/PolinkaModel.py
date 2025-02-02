@@ -43,7 +43,7 @@ class Symulacja():
     """
 
     # while testing using seed
-    np.random.seed(10)
+    # np.random.seed(10)
 
     # Possible symulation states
     class status(Enum):
@@ -102,15 +102,16 @@ class Symulacja():
         # list containting tuples in where numbers mean:
         # (mean, standard deviation, weight)
         hourly_parameters = [
-            (7.20 * 3600, 0.2* 3600, 0.05),
-            (9 * 3600   , 0.4* 3600, 0.15),
-            (11.50 *3600, 0.4* 3600, 0.1),
-            (13* 3600   , 0.3* 3600, 0.2),
-            (14.50* 3600, 0.2* 3600, 0.1),
-            (16* 3600   , 0.2* 3600, 0.2),
-            (17.50* 3600, 0.4* 3600, 0.1),
-            (19* 3600   , 0.4* 3600, 0.05),
-            (20.50* 3600, 0.4* 3600, 0.05),
+            (7.20 * 3600, 0.2 * 3600, 0.25),
+            (9 * 3600, 0.4 * 3600, 0.75),
+            (11.50 * 3600, 0.4 * 3600, 0.5),
+            (13 * 3600, 0.3 * 3600, 1.0),
+            (14.50 * 3600, 0.2 * 3600, 0.5),
+            (16 * 3600, 0.2 * 3600, 1.0),
+            (17.50 * 3600, 0.4 * 3600, 0.5),
+            (19 * 3600, 0.4 * 3600, 0.25),
+            (20.50 * 3600, 0.4 * 3600, 0.25)
+
         ]
 
         passengers = []
@@ -277,7 +278,8 @@ class Symulacja():
                     p = self.temp_second_que.popleft()
                     if second_gondola.count_time is None:
                         second_gondola.count_time = time
-                    second_gondola.people_in_cabin.append(self.temp_second_que.popleft())
+                    p.wait_time = time - p.arrival_time
+                    second_gondola.people_in_cabin.append(p)
 
                 if (first_gondola.count_time != None or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                     if (first_gondola.count_time + first_gondola.max_stay_time <= time or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):

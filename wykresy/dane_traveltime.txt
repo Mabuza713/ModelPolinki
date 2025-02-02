@@ -1,0 +1,250 @@
+--- Trial 1 (Travel Time Experiment) ---
+Travel time = 45 s:
+  Total passengers: 9927
+  Transported: 7776
+  Left queue: 2082
+  Avg wait time: 35.71 s
+  Avg occupancy: 5.23
+  Avg queue length: 6.07
+------
+Travel time = 60 s:
+  Total passengers: 9928
+  Transported: 7216
+  Left queue: 2657
+  Avg wait time: 47.14 s
+  Avg occupancy: 5.64
+  Avg queue length: 8.18
+------
+Travel time = 75 s:
+  Total passengers: 9951
+  Transported: 6483
+  Left queue: 3399
+  Avg wait time: 50.30 s
+  Avg occupancy: 5.37
+  Avg queue length: 9.14
+------
+Travel time = 90 s:
+  Total passengers: 9931
+  Transported: 5954
+  Left queue: 3906
+  Avg wait time: 58.04 s
+  Avg occupancy: 5.53
+  Avg queue length: 10.60
+------
+Travel time = 105 s:
+  Total passengers: 9933
+  Transported: 5336
+  Left queue: 4533
+  Avg wait time: 59.31 s
+  Avg occupancy: 4.98
+  Avg queue length: 10.49
+------
+Travel time = 120 s:
+  Total passengers: 9947
+  Transported: 4796
+  Left queue: 5080
+  Avg wait time: 60.23 s
+  Avg occupancy: 5.75
+  Avg queue length: 11.10
+------
+Travel time = 135 s:
+  Total passengers: 9933
+  Transported: 4332
+  Left queue: 5538
+  Avg wait time: 62.92 s
+  Avg occupancy: 5.49
+  Avg queue length: 12.21
+------
+Travel time = 150 s:
+  Total passengers: 9924
+  Transported: 4108
+  Left queue: 5764
+  Avg wait time: 77.37 s
+  Avg occupancy: 5.01
+  Avg queue length: 11.56
+------
+Travel time = 165 s:
+  Total passengers: 9926
+  Transported: 3627
+  Left queue: 6237
+  Avg wait time: 71.69 s
+  Avg occupancy: 5.31
+  Avg queue length: 13.08
+------
+Travel time = 180 s:
+  Total passengers: 9917
+  Transported: 3366
+  Left queue: 6477
+  Avg wait time: 60.56 s
+  Avg occupancy: 4.89
+  Avg queue length: 12.06
+------
+Wykres zapisany jako simulation_results_traveltime_trial_1.png
+
+
+--- Trial 2 (Travel Time Experiment) ---
+Travel time = 45 s:
+  Total passengers: 9930
+  Transported: 8036
+  Left queue: 1831
+  Avg wait time: 36.40 s
+  Avg occupancy: 5.07
+  Avg queue length: 6.15
+------
+Travel time = 60 s:
+  Total passengers: 9931
+  Transported: 7142
+  Left queue: 2721
+  Avg wait time: 41.41 s
+  Avg occupancy: 5.47
+  Avg queue length: 8.00
+------
+Travel time = 75 s:
+  Total passengers: 9935
+  Transported: 6623
+  Left queue: 3257
+  Avg wait time: 50.11 s
+  Avg occupancy: 5.30
+  Avg queue length: 9.28
+------
+Travel time = 90 s:
+  Total passengers: 9919
+  Transported: 6028
+  Left queue: 3822
+  Avg wait time: 50.69 s
+  Avg occupancy: 5.39
+  Avg queue length: 10.14
+------
+Travel time = 105 s:
+  Total passengers: 9925
+  Transported: 5198
+  Left queue: 4657
+  Avg wait time: 62.55 s
+  Avg occupancy: 5.67
+  Avg queue length: 11.14
+------
+Travel time = 120 s:
+  Total passengers: 9935
+  Transported: 4897
+  Left queue: 4983
+  Avg wait time: 69.60 s
+  Avg occupancy: 5.60
+  Avg queue length: 11.89
+------
+Travel time = 135 s:
+  Total passengers: 9938
+  Transported: 4486
+  Left queue: 5394
+  Avg wait time: 62.51 s
+  Avg occupancy: 5.74
+  Avg queue length: 12.61
+------
+Travel time = 150 s:
+  Total passengers: 9937
+  Transported: 4089
+  Left queue: 5784
+  Avg wait time: 64.60 s
+  Avg occupancy: 5.77
+  Avg queue length: 12.97
+------
+Travel time = 165 s:
+  Total passengers: 9943
+  Transported: 3666
+  Left queue: 6214
+  Avg wait time: 72.21 s
+  Avg occupancy: 5.03
+  Avg queue length: 12.63
+------
+Travel time = 180 s:
+  Total passengers: 9935
+  Transported: 3693
+  Left queue: 6183
+  Avg wait time: 63.17 s
+  Avg occupancy: 4.42
+  Avg queue length: 12.48
+------
+Wykres zapisany jako simulation_results_traveltime_trial_2.png
+
+
+--- Trial 3 (Travel Time Experiment) ---
+Travel time = 45 s:
+  Total passengers: 9944
+  Transported: 8041
+  Left queue: 1841
+  Avg wait time: 44.04 s
+  Avg occupancy: 4.92
+  Avg queue length: 6.13
+------
+Travel time = 60 s:
+  Total passengers: 9942
+  Transported: 7208
+  Left queue: 2678
+  Avg wait time: 49.36 s
+  Avg occupancy: 5.17
+  Avg queue length: 8.01
+------
+Travel time = 75 s:
+  Total passengers: 9942
+  Transported: 6519
+  Left queue: 3359
+  Avg wait time: 56.06 s
+  Avg occupancy: 5.39
+  Avg queue length: 9.50
+------
+Travel time = 90 s:
+  Total passengers: 9933
+  Transported: 5872
+  Left queue: 3999
+  Avg wait time: 57.33 s
+  Avg occupancy: 5.56
+  Avg queue length: 10.55
+------
+Travel time = 105 s:
+  Total passengers: 9938
+  Transported: 5165
+  Left queue: 4721
+  Avg wait time: 61.53 s
+  Avg occupancy: 5.19
+  Avg queue length: 10.22
+------
+Travel time = 120 s:
+  Total passengers: 9932
+  Transported: 4712
+  Left queue: 5153
+  Avg wait time: 63.84 s
+  Avg occupancy: 5.15
+  Avg queue length: 11.63
+------
+Travel time = 135 s:
+  Total passengers: 9940
+  Transported: 4433
+  Left queue: 5455
+  Avg wait time: 65.97 s
+  Avg occupancy: 5.08
+  Avg queue length: 12.03
+------
+Travel time = 150 s:
+  Total passengers: 9934
+  Transported: 4077
+  Left queue: 5806
+  Avg wait time: 58.09 s
+  Avg occupancy: 5.49
+  Avg queue length: 12.52
+------
+Travel time = 165 s:
+  Total passengers: 9938
+  Transported: 3795
+  Left queue: 6075
+  Avg wait time: 64.73 s
+  Avg occupancy: 4.77
+  Avg queue length: 12.42
+------
+Travel time = 180 s:
+  Total passengers: 9940
+  Transported: 3515
+  Left queue: 6351
+  Avg wait time: 64.87 s
+  Avg occupancy: 5.22
+  Avg queue length: 12.92
+------
+Wykres zapisany jako simulation_results_traveltime_trial_3.png
