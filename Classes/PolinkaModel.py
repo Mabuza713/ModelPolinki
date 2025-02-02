@@ -242,7 +242,7 @@ class Symulacja():
             for index, passanger in enumerate(self.first_line):
                 if self.first_line[index] != None:
                     if passanger.arrival_time <= time :
-                        passanger.wait_time = time - passanger.arrival_time
+                        # passanger.wait_time = time - passanger.arrival_time
                         self.temp_first_que.append(passanger)
                         self.first_line[index] = None
                     else:
@@ -250,7 +250,7 @@ class Symulacja():
             for index, passanger in enumerate(self.second_line):
                 if (self.second_line[index] != None):
                     if passanger.arrival_time <= time:
-                        passanger.wait_time = time - passanger.arrival_time
+                        # passanger.wait_time = time - passanger.arrival_time
                         self.temp_second_que.append(passanger)
                         self.second_line[index] = None
                     else:
@@ -265,13 +265,17 @@ class Symulacja():
                 first_gondola = gondola_que[0]
                 second_gondola = gondola_que[len(gondola_que)-1]
 
-                while (len(first_gondola.people_in_cabin) < first_gondola.cabins_capacity and len(self.temp_first_que) > 0 ):
-                    if (first_gondola.count_time == None):
+                while (len(first_gondola.people_in_cabin) < first_gondola.cabins_capacity and len(self.temp_first_que) > 0):
+                    p = self.temp_first_que.popleft()  # pobieramy pasażera
+                    if first_gondola.count_time is None:
                         first_gondola.count_time = time
-                    first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
+                    # Uaktualniamy czas oczekiwania – boarding time minus arrival time
+                    p.wait_time = time - p.arrival_time
+                    first_gondola.people_in_cabin.append(p)
 
-                while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0 ):
-                    if (second_gondola.count_time == None):
+                while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0):
+                    p = self.temp_second_que.popleft()
+                    if second_gondola.count_time is None:
                         second_gondola.count_time = time
                     second_gondola.people_in_cabin.append(self.temp_second_que.popleft())
 

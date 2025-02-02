@@ -7,7 +7,7 @@ fixed_travel_time = 180    # czas przejazdu (s)
 fixed_max_stay_time = 30   # maksymalny czas oczekiwania (s)
 
 # Lista wartości, dla których zmieniamy pojemność gondoli
-capacities = [2, 4, 6, 8, 10]
+capacities = [2,4,6,8,10,12,15,18,20]
 
 # Listy do przechowywania wyników
 total_passengers_list = []
