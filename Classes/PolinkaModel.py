@@ -87,6 +87,14 @@ class Symulacja():
 
         self.temp_variable = 0
 
+        self.gondola_occupancies = []  # Zbiór wartości zapełnienia gondoli przy odjazdach
+        # Inicjalizacja list do statystyk:
+        self.simulation_time_data = []
+        self.amount_people_who_come = []
+        self.people_in_queue_data = []
+        self.people_who_left_data = []
+        self.people_transported_data = []
+
 
 
     def PassengerSimulation(self):
@@ -222,11 +230,10 @@ class Symulacja():
         gondola_que = deque()
 
         for i in range(0, 2):
-             gondola_que.append(Gondola(self.cabins_capacity, self.travel_time, self.max_stay_time))
+            gondola_que.append(Gondola(self.cabins_capacity, self.travel_time, self.max_stay_time))
 
 
         for time in range(7 * 60 * 60 - 100, 21 * 60 * 60):
-
 
             self.DeleteNoneValuesFromQueues()
             self.CheckWhoLeavesQueues(time)
@@ -251,48 +258,40 @@ class Symulacja():
 
             # Counting people in queue
             first_line, second_line = self.CountPeopleInQueues()
-            self.people_in_queue_data.append([first_line,second_line])
-
+            self.people_in_queue_data.append([first_line, second_line])
 
             if (self.current_status == self.status("waiting") and time >= 7*3600):
 
-
                 first_gondola = gondola_que[0]
                 second_gondola = gondola_que[len(gondola_que)-1]
-
 
                 while (len(first_gondola.people_in_cabin) < first_gondola.cabins_capacity and len(self.temp_first_que) > 0 ):
                     if (first_gondola.count_time == None):
                         first_gondola.count_time = time
                     first_gondola.people_in_cabin.append(self.temp_first_que.popleft())
 
-
-
                 while (len(second_gondola.people_in_cabin) < second_gondola.cabins_capacity and len(self.temp_second_que) > 0 ):
                     if (second_gondola.count_time == None):
                         second_gondola.count_time = time
                     second_gondola.people_in_cabin.append(self.temp_second_que.popleft())
 
-
                 if (first_gondola.count_time != None or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                     if (first_gondola.count_time + first_gondola.max_stay_time <= time or len(first_gondola.people_in_cabin) == first_gondola.cabins_capacity):
                         first_gondola.departure_time = time
-                        # print(f"""First gondola departure time: {self.TimeToNormal(first_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
-                        # print(f"""First gondola departure time: {self.TimeToNormal(first_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
 
                 if (second_gondola.count_time != None or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                     if (second_gondola.count_time + second_gondola.max_stay_time <= time or len(second_gondola.people_in_cabin) == second_gondola.cabins_capacity):
                         second_gondola.departure_time = time
-                        # print(f"""Second gondola departure time: {self.TimeToNormal(second_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
-                        # print(f"""Second gondola departure time: {self.TimeToNormal(second_gondola.departure_time)}\nwith {len(first_gondola.people_in_cabin)} in first gondola\nand  {len(second_gondola.people_in_cabin)} in second gondola\n""")
                         self.current_status = self.status("moving")
 
-
-
             if (self.current_status == self.status("moving")):
+                # Obsługa odjazdu pierwszej gondoli
                 if (first_gondola.departure_time != None):
                     if (first_gondola.departure_time + first_gondola.travel_time <= time):
+                        # Modyfikacja: Rejestracja zapełnienia gondoli
+                        self.gondola_occupancies.append(len(first_gondola.people_in_cabin))
+
                         second_gondola.arrival_time = time
                         first_gondola.arrival_time = time
                         second_gondola.count_time = None
@@ -312,8 +311,12 @@ class Symulacja():
 
                         self.current_status = self.status("waiting")
 
+                # Obsługa odjazdu drugiej gondoli
                 elif (second_gondola.departure_time != None):
                     if (second_gondola.departure_time + second_gondola.travel_time < time):
+                        # Modyfikacja: Rejestracja zapełnienia gondoli
+                        self.gondola_occupancies.append(len(second_gondola.people_in_cabin))
+
                         second_gondola.count_time = None
                         first_gondola.count_time = None
                         second_gondola.arrival_time = time
@@ -336,7 +339,6 @@ class Symulacja():
             self.DeleteNoneValuesFromQueues()
             self.simulation_time_data.append(time)
             self.people_who_left_data.append(len(self.passangers_that_left_que))
-            # self.people_who_left_data.append(len(self.passangers_that_left_que)-sum(self.people_who_left_data))
             self.people_transported_data.append(len(self.already_transported_passangers))
             self.CheckWhoLeavesQueues(time)
             self.DeleteNoneValuesFromQueues()
